@@ -286,3 +286,42 @@ button { font: inherit; }
   .calendar-days { row-gap: 5px; }
   .calendar-day.is-today > span { width: 30px; height: 30px; }
 }
+
+/* Work shifts */
+.work-layout { display: flex; align-items: flex-start; gap: clamp(32px, 5vw, 72px); max-width: 1080px; }
+.work-calendar { flex: 1 1 600px; min-width: 0; }
+.work-aside { flex: 0 0 224px; padding-top: 2px; display: grid; gap: 12px; }
+.add-shift-button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; height: 42px; border: 1px solid #373b3d; border-radius: 10px; color: #f7f7f7; background: #202325; font-size: 12px; font-weight: 550; cursor: pointer; margin-bottom: 9px; }
+.add-shift-button:hover { background: #2a2e30; }
+.add-shift-plus { font-size: 20px; font-weight: 300; line-height: 1; }
+.work-stat { border: 1px solid var(--border); border-radius: 12px; background: #161819; padding: 17px; }
+.work-stat-name { display: flex; align-items: center; gap: 8px; color: #babec0; font-size: 12px; margin-bottom: 13px; }
+.work-dot { width: 7px; height: 7px; border-radius: 50%; }
+.work-dot.primary { background: #49bb81; }
+.work-dot.taltap { background: #5c9bff; }
+.work-stat-line { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.work-stat-line strong { color: #f4f4f4; font-size: 27px; line-height: 1; font-weight: 450; font-variant-numeric: tabular-nums; letter-spacing: -.045em; }
+.work-stat-line strong small { color: #8f9395; font-size: 13px; letter-spacing: 0; }
+.hourly-rate { font-size: 11px; color: #8b9093; white-space: nowrap; }
+.work-stat-caption { margin: 1px 0 0; color: #656a6c; font-size: 10px; }
+.calendar-day { position: relative; border-radius: 9px; padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 3px; align-items: center; justify-content: center; }
+.calendar-day:hover { background: #1b1e20; }
+.calendar-day.is-selected { background: #24282a; }
+.calendar-day.is-outside { color: #55595b; }
+.calendar-shifts { min-height: 12px; display: flex; justify-content: center; gap: 3px; }
+.shift-briefcase { display: inline-flex; width: 13px; height: 12px; }
+.shift-briefcase svg { width: 13px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
+.shift-briefcase.primary { color: #49bb81; }
+.shift-briefcase.taltap { color: #5c9bff; }
+.shift-dialog { width: min(92vw, 340px); padding: 22px; background: #1b1e20; color: #f3f3f3; border: 1px solid #383d3f; border-radius: 14px; box-shadow: 0 20px 80px #0009; }
+.shift-dialog::backdrop { background: #0009; }
+.dialog-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.dialog-heading h2 { font-size: 17px; font-weight: 500; margin: 0; }
+.dialog-close { background: transparent; color: #999; border: 0; font-size: 25px; cursor: pointer; }
+.field-label { display: block; color: #a6aaac; font-size: 12px; margin: 12px 0 7px; }
+.shift-input { width: 100%; min-height: 40px; background: #121415; border: 1px solid #363a3c; border-radius: 8px; padding: 8px 10px; color: #f4f4f4; font: inherit; font-size: 13px; color-scheme: dark; }
+.shift-input:focus { outline: 1px solid #a4a8aa; }
+.shift-submit { margin-top: 22px; width: 100%; height: 42px; border: 0; border-radius: 8px; background: #f0f0ef; color: #151718; font-size: 13px; font-weight: 600; cursor: pointer; }
+.shift-submit:hover { background: white; }
+@media (max-width: 860px) { .work-layout { flex-direction: column; gap: 28px; } .work-calendar { flex: auto; width: min(100%, 660px); } .work-aside { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: min(100%,660px); padding-top: 0; flex: auto; gap: 10px; } .add-shift-button { grid-column: 1/-1; margin-bottom: 0; } .work-stat-caption { grid-column: 1/-1; } }
+@media (max-width: 480px) { .work-stat { padding: 12px; } .work-stat-line strong { font-size: 23px; } .hourly-rate { font-size: 10px; } .calendar-day { min-height: 49px; } .calendar-day.is-today > span:first-child { width: 30px; height: 30px; } }
