@@ -382,3 +382,49 @@ button { font: inherit; }
 .cloud-email-display { color: #d6d9da; overflow-wrap: anywhere; font-size: 13px; margin: 10px 0 18px; }
 .cloud-message { font-size: 12px; line-height: 1.5; color: #aeb2b3; min-height: 1em; margin: 12px 0 0; }
 #cloud-signed-in[hidden], #cloud-signed-out[hidden] { display: none; }
+
+/* Debts & Credits */
+.main-content { overflow-y: auto; }
+.debt-container { width: min(100%, 780px); }
+.debts-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding-bottom: 26px; border-bottom: 1px solid var(--border); }
+.debt-kicker { color: #8a8f91; font-size: 11px; letter-spacing: .1em; font-weight: 500; }
+.debt-grand-total { color: #f1f2f1; font-size: clamp(32px, 4.5vw, 44px); font-weight: 450; letter-spacing: -.055em; margin-top: 10px; font-variant-numeric: tabular-nums; }
+.debt-monthly-summary { display: flex; align-items: baseline; gap: 12px; margin-top: 13px; font-size: 12px; color: #8d9294; }
+.debt-monthly-summary strong { font-size: 13px; color: #d4d7d6; font-weight: 500; font-variant-numeric: tabular-nums; }
+.debt-add-button { display: grid; place-items: center; width: 39px; height: 39px; flex: 0 0 39px; background: #25292b; border: 1px solid #363b3d; border-radius: 10px; color: #f0f1f0; font-size: 25px; font-weight: 300; cursor: pointer; }
+.debt-add-button:hover { background: #303638; }
+.debts-list { display: grid; }
+.debt-card { display: grid; gap: 17px; padding: 26px 0 24px; width: 100%; border: 0; border-bottom: 1px solid var(--border); background: transparent; color: inherit; text-align: left; cursor: pointer; }
+.debt-card:hover .debt-card-title { color: #a5d0b6; }
+.debt-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.debt-name-group { display: grid; gap: 5px; }
+.debt-card-title { font-size: 15px; font-weight: 500; color: #ebedeb; transition: color 150ms ease; overflow-wrap: anywhere; }
+.debt-type-label { font-size: 10px; color: #6f7678; }
+.debt-progress-values { color: #a9afb1; font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.debt-progress-track { background: #303536; border-radius: 10px; height: 5px; overflow: hidden; }
+.debt-progress-fill { background: #77aa92; height: 100%; border-radius: inherit; transition: width 180ms ease; }
+.debt-card-bottom { display: flex; justify-content: space-between; gap: 12px; color: #8e9597; font-size: 12px; font-variant-numeric: tabular-nums; }
+.debts-empty { color: #7d8385; font-size: 13px; padding-top: 34px; }
+.debts-empty[hidden] { display: none; }
+.debt-dialog { width: min(92vw, 385px); }
+.debt-form-error { color: #e4a3a0; font-size: 12px; min-height: 1em; line-height: 1.5; margin: 9px 0 0; }
+.debt-detail-info { display: flex; justify-content: space-between; gap: 18px; font-size: 12px; padding: 11px 0; border-bottom: 1px solid #2a2e30; color: #92999b; }
+.debt-detail-info strong { color: #e2e4e3; font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+.debt-history-title { margin: 23px 0 9px; font-size: 12px; font-weight: 550; }
+.debt-history-empty { color: #82898a; font-size: 12px; }
+.debt-history-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #292d2f; }
+.debt-history-info { display: grid; gap: 5px; }
+.debt-history-info strong { font-size: 13px; font-weight: 500; color: #e8ebea; }
+.debt-history-info small { font-size: 11px; color: #81898a; }
+.debt-history-remove { padding: 5px 10px; border: 0; border-radius: 8px; font-size: 20px; color: #8a9193; background: transparent; cursor: pointer; }
+.debt-history-remove:hover { background: #3a2929; color: #f0a0a0; }
+.debt-detail-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; align-items: end; margin-top: 18px; }
+.debt-detail-actions .shift-submit { margin-top: 10px; }
+.debt-detail-actions .cloud-secondary { margin-top: 10px; }
+@media (max-width: 600px) {
+  .debts-top { padding-bottom: 24px; }
+  .debt-card { padding: 23px 0; gap: 15px; }
+  .debt-card-top { flex-wrap: wrap; }
+  .debt-progress-values { font-size: 11px; }
+  .debt-card-bottom { font-size: 11px; }
+}
