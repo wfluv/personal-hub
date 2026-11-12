@@ -363,3 +363,22 @@ button { font: inherit; }
   border: 0;
   border-radius: 0;
 }
+
+/* Cloud sync — unobtrusive navigation control */
+.sidebar { flex-direction: column; justify-content: flex-start; align-items: center; }
+.cloud-access { margin-top: auto; display: grid; place-items: center; position: relative; width: 42px; height: 42px; border: 0; border-radius: 11px; background: transparent; color: #85898b; cursor: pointer; }
+.cloud-access:hover { background: var(--hover); color: #eee; }
+.cloud-access svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.cloud-indicator { position: absolute; right: 6px; bottom: 6px; width: 7px; height: 7px; border-radius: 50%; background: #62676a; border: 1px solid #0d0f10; }
+.cloud-indicator.connected { background: #49bb81; }
+.cloud-indicator.error { background: #dc8a67; }
+.cloud-dialog { width: min(92vw, 365px); }
+.cloud-status { font-size: 12px; margin: -6px 0 15px; color: #8a9294; }
+.cloud-help { color: #aeb2b3; line-height: 1.6; font-size: 12px; margin-bottom: 20px; }
+.cloud-auth-actions { display: grid; gap: 10px; margin-top: 4px; }
+.cloud-secondary { display: block; width: 100%; height: 39px; border: 1px solid #414649; border-radius: 8px; background: transparent; color: #e2e4e3; font-size: 12px; cursor: pointer; margin-top: 10px; }
+.cloud-secondary:hover { background: #282c2e; }
+.cloud-signout { display: block; border: 0; padding: 14px 0 0; background: transparent; color: #8f9597; font-size: 12px; cursor: pointer; }
+.cloud-email-display { color: #d6d9da; overflow-wrap: anywhere; font-size: 13px; margin: 10px 0 18px; }
+.cloud-message { font-size: 12px; line-height: 1.5; color: #aeb2b3; min-height: 1em; margin: 12px 0 0; }
+#cloud-signed-in[hidden], #cloud-signed-out[hidden] { display: none; }
