@@ -1,3 +1,4 @@
+import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut } from "./cloud.js";
 const root = document.querySelector("#app");
 
 if (!root) {
@@ -86,8 +87,12 @@ function readArray(key) {
   } catch { return []; }
 }
 function saveArray(key, entries) {
-  try { localStorage.setItem(key, JSON.stringify(entries)); return true; }
-  catch { alert("Could not save on this device. Please check browser storage."); return false; }
+  try {
+    const previous = readArray(key);
+    localStorage.setItem(key, JSON.stringify(entries));
+    queueCloudDiff(key, previous, entries);
+    return true;
+  } catch { alert("Could not save on this device. Please check browser storage."); return false; }
 }
 function newId() { return "entry-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10); }
 const shiftStorageKey = "personal-hub:work-shifts:v1"; // Preserve shifts entered in the first release.
@@ -98,6 +103,12 @@ let shifts = readArray(shiftStorageKey).filter((s) =>
   ...s, id: typeof s.id === "string" ? s.id : "legacy-" + index,
   payment: s.type === "taltap" && Number.isFinite(s.payment) && s.payment >= 0 ? s.payment : null
 }));
+// Upgrade old, non-unique legacy IDs before importing to cloud.
+if (shifts.some((shift) => shift.id.startsWith("legacy-"))) {
+  shifts = shifts.map((shift) => shift.id.startsWith("legacy-")
+    ? { ...shift, id: newId() } : shift);
+  localStorage.setItem(shiftStorageKey, JSON.stringify(shifts));
+}
 let payments = readArray(paymentStorageKey).filter((p) =>
   p && typeof p.id === "string" && validDay(p.date) &&
   /^\d{4}-(0[1-9]|1[0-2])$/.test(p.workMonth) && Number.isFinite(p.amount) && p.amount > 0
@@ -351,3 +362,59 @@ $("#payment-form").addEventListener("submit", (event) => {
 });
 
 renderCalendar();
+
+const cloudDialog = $("#cloud-dialog");
+const cloudStatus = $("#cloud-status");
+const cloudMessage = $("#cloud-message");
+const cloudIndicator = $("#cloud-indicator");
+function showCloudStatus(message) {
+  cloudStatus.textContent = message;
+  cloudIndicator.classList.toggle("connected", message === "Synced");
+  cloudIndicator.classList.toggle("error", /error|unavailable|offline/i.test(message));
+}
+function cloudUserChanged(person) {
+  $("#cloud-signed-out").hidden = !!person;
+  $("#cloud-signed-in").hidden = !person;
+  $("#cloud-current-email").textContent = person?.email || "";
+}
+function cloudRecordsChanged() {
+  shifts = readArray(shiftStorageKey).filter((s) =>
+    s && validDay(s.date) && ["main", "taltap"].includes(s.type) &&
+    Number.isFinite(s.hours) && s.hours > 0 && s.hours <= 24);
+  payments = readArray(paymentStorageKey).filter((p) =>
+    p && validDay(p.date) && typeof p.workMonth === "string" &&
+    Number.isFinite(p.amount) && p.amount > 0);
+  renderCalendar();
+}
+$("#cloud-access").addEventListener("click", () => cloudDialog.showModal());
+$("#cloud-close").addEventListener("click", () => cloudDialog.close());
+$("#cloud-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  cloudMessage.textContent = "Signing in…";
+  try {
+    await signIn($("#cloud-email").value.trim(), $("#cloud-password").value);
+    cloudMessage.textContent = "Signed in. Your records are syncing.";
+    $("#cloud-password").value = "";
+  } catch (error) { cloudMessage.textContent = error.message; }
+});
+$("#cloud-register").addEventListener("click", async () => {
+  const form = $("#cloud-form");
+  if (!form.reportValidity()) return;
+  cloudMessage.textContent = "Creating account…";
+  try {
+    cloudMessage.textContent = await signUp($("#cloud-email").value.trim(), $("#cloud-password").value);
+    $("#cloud-password").value = "";
+  } catch (error) { cloudMessage.textContent = error.message; }
+});
+$("#cloud-signout").addEventListener("click", async () => {
+  try {
+    await signOut();
+    cloudMessage.textContent = "Signed out. Existing local records are still stored on this device.";
+  } catch (error) { cloudMessage.textContent = error.message; }
+});
+$("#cloud-sync-now").addEventListener("click", () => void synchronize());
+void initializeCloud({
+  onChange: cloudRecordsChanged,
+  onStatus: showCloudStatus,
+  onUser: cloudUserChanged
+});
