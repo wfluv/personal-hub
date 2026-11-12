@@ -1,5 +1,5 @@
 import { initDebts, refreshDebts } from "./debts.js";
-import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut } from "./cloud.js";
+import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut } from "./cloud.js?v=debts-1";
 const root = document.querySelector("#app");
 
 if (!root) {
