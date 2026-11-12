@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#101112" />
     <meta name="description" content="Personal Hub — finances and work in one place." />
     <title>Personal Hub</title>
-    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="stylesheet" href="./src/styles.css?v=work-shifts-1" />
   </head>
   <body>
     <div id="app">
@@ -46,7 +46,7 @@
           </section>
 
           <section class="page page-work" data-view="work" aria-label="Work" hidden>
-            <div class="work-calendar" aria-label="Work calendar">
+            <div class="work-layout"><div class="work-calendar" aria-label="Work calendar">
               <header class="calendar-header">
                 <h1 class="calendar-title" id="calendar-month"></h1>
                 <div class="calendar-controls">
@@ -59,10 +59,29 @@
               </div>
               <div class="calendar-days" id="calendar-days" role="grid" aria-labelledby="calendar-month"></div>
             </div>
+            <aside class="work-aside">
+              <button class="add-shift-button" id="add-shift" type="button"><span class="add-shift-plus" aria-hidden="true">+</span> Add shift</button>
+              <div class="work-stat"><div class="work-stat-name"><span class="work-dot primary"></span> Main work</div><div class="work-stat-line"><strong id="main-hours">0 <small>h</small></strong><span class="hourly-rate">— €/h</span></div></div>
+              <div class="work-stat"><div class="work-stat-name"><span class="work-dot taltap"></span> TalTap</div><div class="work-stat-line"><strong id="taltap-hours">0 <small>h</small></strong><span class="hourly-rate">— €/h</span></div></div>
+              <p class="work-stat-caption">Hours for the displayed month</p>
+            </aside>
+            </div>
+            <dialog class="shift-dialog" id="shift-dialog" aria-labelledby="shift-dialog-title">
+              <form id="shift-form">
+                <div class="dialog-heading"><h2 id="shift-dialog-title">Add shift</h2><button class="dialog-close" id="close-shift" type="button" aria-label="Close">×</button></div>
+                <label class="field-label" for="shift-date">Date</label>
+                <input class="shift-input" id="shift-date" name="date" type="date" required />
+                <label class="field-label" for="shift-type">Work</label>
+                <select class="shift-input" id="shift-type" name="type"><option value="main">Main work</option><option value="taltap">TalTap</option></select>
+                <label class="field-label" for="shift-hours">Hours</label>
+                <input class="shift-input" id="shift-hours" name="hours" type="number" min="0.25" max="24" step="0.25" placeholder="8" inputmode="decimal" required />
+                <button class="shift-submit" type="submit">Save shift</button>
+              </form>
+            </dialog>
           </section>
         </main>
       </div>
     </div>
-    <script type="module" src="./src/main.js"></script>
+    <script type="module" src="./src/main.js?v=work-shifts-1"></script>
   </body>
 </html>
