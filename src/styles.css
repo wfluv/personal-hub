@@ -428,3 +428,8 @@ button { font: inherit; }
   .debt-progress-values { font-size: 11px; }
   .debt-card-bottom { font-size: 11px; }
 }
+
+/* Account recovery */
+.cloud-forgot { display: block; width: 100%; margin-top: 6px; padding: 9px; border: 0; background: transparent; color: #a7aeb1; font-size: 12px; cursor: pointer; }
+.cloud-forgot:hover { color: #fff; }
+#cloud-recovery-form[hidden] { display: none; }
