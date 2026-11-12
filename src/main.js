@@ -59,137 +59,295 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") closeAllocation();
 });
 
-// Calendar uses the Latvian civil date, including Riga daylight-saving changes.
+// All calendar dates use Latvia's local calendar, including DST.
 const calendarZone = "Europe/Riga";
-const calendarMonth = document.querySelector("#calendar-month");
-const calendarDays = document.querySelector("#calendar-days");
-const monthFormatter = new Intl.DateTimeFormat("en-GB", {
-  month: "long", year: "numeric", timeZone: "UTC"
-});
-const dateFormatter = new Intl.DateTimeFormat("en-CA", {
-  year: "numeric", month: "2-digit", day: "2-digit", timeZone: calendarZone
-});
+const $ = (selector) => document.querySelector(selector);
+const monthFormatter = new Intl.DateTimeFormat("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+const dayFormatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const localDateFormatter = new Intl.DateTimeFormat("en-GB", { year: "numeric", month: "2-digit", day: "2-digit", timeZone: calendarZone });
+const dateKey = (year, month, day) => [year, String(month + 1).padStart(2, "0"), String(day).padStart(2, "0")].join("-");
+const euro = (value) => new Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+const quantity = (value) => Number(value.toFixed(2)).toString();
+const briefcaseSVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12h18"></path></svg>';
 function rigaToday() {
-  const parts = dateFormatter.formatToParts(new Date());
-  const get = (type) => Number(parts.find((part) => part.type === type).value);
-  return { year: get("year"), month: get("month") - 1, day: get("day") };
+  const pieces = localDateFormatter.formatToParts(new Date());
+  const val = (type) => Number(pieces.find((piece) => piece.type === type).value);
+  return { year: val("year"), month: val("month") - 1, day: val("day") };
 }
+function validDay(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(value + "T00:00:00Z");
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
+}
+function readArray(key) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(value) ? value : [];
+  } catch { return []; }
+}
+function saveArray(key, entries) {
+  try { localStorage.setItem(key, JSON.stringify(entries)); return true; }
+  catch { alert("Could not save on this device. Please check browser storage."); return false; }
+}
+function newId() { return "entry-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10); }
+const shiftStorageKey = "personal-hub:work-shifts:v1"; // Preserve shifts entered in the first release.
+const paymentStorageKey = "personal-hub:salary-payments:v1";
+let shifts = readArray(shiftStorageKey).filter((s) =>
+  s && validDay(s.date) && ["main","taltap"].includes(s.type) && Number.isFinite(s.hours) && s.hours > 0 && s.hours <= 24
+).map((s, index) => ({
+  ...s, id: typeof s.id === "string" ? s.id : "legacy-" + index,
+  payment: s.type === "taltap" && Number.isFinite(s.payment) && s.payment >= 0 ? s.payment : null
+}));
+let payments = readArray(paymentStorageKey).filter((p) =>
+  p && typeof p.id === "string" && validDay(p.date) &&
+  /^\d{4}-(0[1-9]|1[0-2])$/.test(p.workMonth) && Number.isFinite(p.amount) && p.amount > 0
+);
 const initialDate = rigaToday();
 let visibleYear = initialDate.year;
 let visibleMonth = initialDate.month;
-const dateKey = (year, month, day) => [year, String(month + 1).padStart(2, "0"), String(day).padStart(2, "0")].join("-");
 let selectedDate = dateKey(initialDate.year, initialDate.month, initialDate.day);
-const shiftStorageKey = "personal-hub:work-shifts:v1";
-function loadShifts() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(shiftStorageKey) || "[]");
-    return Array.isArray(parsed) ? parsed.filter(s => s && /^\d{4}-\d{2}-\d{2}$/.test(s.date) && ["main", "taltap"].includes(s.type) && Number.isFinite(s.hours) && s.hours > 0 && s.hours <= 24) : [];
-  } catch { return []; }
-}
-let shifts = loadShifts();
-const shiftDialog = document.querySelector("#shift-dialog");
-const shiftForm = document.querySelector("#shift-form");
-const dateInput = document.querySelector("#shift-date");
-const hoursInput = document.querySelector("#shift-hours");
-const briefcaseSVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12h18"></path></svg>';
-function renderWorkStats() {
-  const monthPrefix = dateKey(visibleYear, visibleMonth, 1).slice(0, 7);
-  const totals = { main: 0, taltap: 0 };
-  shifts.forEach(s => { if (s.date.startsWith(monthPrefix)) totals[s.type] += s.hours; });
-  const format = value => Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
-  document.querySelector("#main-hours").innerHTML = format(totals.main) + " <small>h</small>";
-  document.querySelector("#taltap-hours").innerHTML = format(totals.taltap) + " <small>h</small>";
-}
-function openShiftDialog() {
-  dateInput.value = selectedDate;
-  hoursInput.value = "";
-  shiftDialog.showModal();
-}
-document.querySelector("#add-shift").addEventListener("click", openShiftDialog);
-document.querySelector("#close-shift").addEventListener("click", () => shiftDialog.close());
-shiftDialog.addEventListener("click", (event) => {
-  if (event.target === shiftDialog) shiftDialog.close();
-});
-shiftForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const date = dateInput.value;
-  const type = document.querySelector("#shift-type").value;
-  const hours = Number(hoursInput.value);
-  const parsedDate = new Date(date + "T00:00:00Z");
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(parsedDate.getTime()) || parsedDate.toISOString().slice(0,10) !== date || !["main","taltap"].includes(type) || !Number.isFinite(hours) || hours <= 0 || hours > 24) return;
-  const next = [...shifts, { date, type, hours }];
-  try { localStorage.setItem(shiftStorageKey, JSON.stringify(next)); } catch { alert("Unable to save this shift on this device."); return; }
-  shifts = next;
-  selectedDate = date;
-  visibleYear = parsedDate.getUTCFullYear();
-  visibleMonth = parsedDate.getUTCMonth();
-  renderCalendar();
-  shiftDialog.close();
-});
+let editingShiftId = null;
+const calendarDays = $("#calendar-days");
+const shiftDialog = $("#shift-dialog");
+const dayDialog = $("#day-dialog");
+const paymentDialog = $("#payment-dialog");
+const shiftForm = $("#shift-form");
+const dateInput = $("#shift-date");
+const typeInput = $("#shift-type");
+const hoursInput = $("#shift-hours");
+const receivedInput = $("#shift-payment");
 
+function renderWorkStats() {
+  const month = dateKey(visibleYear, visibleMonth, 1).slice(0, 7);
+  const monthly = shifts.filter((s) => s.date.startsWith(month));
+  const main = monthly.filter((s) => s.type === "main");
+  const taltap = monthly.filter((s) => s.type === "taltap");
+  const totalHours = (items) => items.reduce((total, item) => total + item.hours, 0);
+  const hoursMain = totalHours(main);
+  const hoursTalTap = totalHours(taltap);
+  const salary = payments.filter((p) => p.workMonth === month).reduce((total, p) => total + p.amount, 0);
+  const talPaid = taltap.reduce((total, s) => total + (s.payment ?? 0), 0);
+  $("#main-hours").innerHTML = quantity(hoursMain) + " <small>h</small>";
+  $("#taltap-hours").innerHTML = quantity(hoursTalTap) + " <small>h</small>";
+  $("#main-pay").textContent = salary > 0 ? euro(salary) : "—";
+  $("#taltap-pay").textContent = taltap.some((s) => s.payment !== null) ? euro(talPaid) : "—";
+  $("#main-rate").textContent = salary > 0 && hoursMain > 0 ? euro(salary / hoursMain) + "/h" : "— €/h";
+  // Older TalTap shifts without income should not make the average misleading.
+  $("#taltap-rate").textContent = hoursTalTap > 0 && taltap.every((s) => s.payment !== null)
+    ? euro(talPaid / hoursTalTap) + "/h" : "— €/h";
+}
 
 function renderCalendar() {
   const today = rigaToday();
-  calendarMonth.textContent = monthFormatter.format(new Date(Date.UTC(visibleYear, visibleMonth, 1)));
+  $("#calendar-month").textContent = monthFormatter.format(new Date(Date.UTC(visibleYear, visibleMonth, 1)));
   calendarDays.replaceChildren();
-
-  // UTC arithmetic avoids timezone and DST offsets while calculating the grid.
-  const firstDay = new Date(Date.UTC(visibleYear, visibleMonth, 1));
-  const mondayOffset = (firstDay.getUTCDay() + 6) % 7;
+  const mondayOffset = (new Date(Date.UTC(visibleYear, visibleMonth, 1)).getUTCDay() + 6) % 7;
   const monthLength = new Date(Date.UTC(visibleYear, visibleMonth + 1, 0)).getUTCDate();
-  const numberOfCells = Math.ceil((mondayOffset + monthLength) / 7) * 7;
+  const cells = Math.ceil((mondayOffset + monthLength) / 7) * 7;
 
-  for (let i = 0; i < numberOfCells; i++) {
-    const date = new Date(Date.UTC(visibleYear, visibleMonth, i - mondayOffset + 1));
+  for (let i = 0; i < cells; i++) {
+    const date = new Date(Date.UTC(visibleYear, visibleMonth, 1 + i - mondayOffset));
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
     const day = date.getUTCDate();
+    const key = dateKey(year, month, day);
     const cell = document.createElement("button");
     cell.type = "button";
     cell.className = "calendar-day";
     cell.setAttribute("role", "gridcell");
-    const key = dateKey(year, month, day);
-    if (key === selectedDate) cell.classList.add("is-selected");
-    cell.addEventListener("click", () => {
-      selectedDate = key;
-      if (month !== visibleMonth || year !== visibleYear) { visibleYear = year; visibleMonth = month; }
-      renderCalendar();
-    });
-    cell.setAttribute("aria-label", new Intl.DateTimeFormat("en-GB", {
-      day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
-    }).format(date));
+    cell.setAttribute("aria-label", dayFormatter.format(date));
     if (month !== visibleMonth) cell.classList.add("is-outside");
     if (year === today.year && month === today.month && day === today.day) {
       cell.classList.add("is-today");
       cell.setAttribute("aria-current", "date");
     }
+    cell.addEventListener("click", () => {
+      selectedDate = key;
+      if (visibleMonth !== month || visibleYear !== year) { visibleMonth = month; visibleYear = year; renderCalendar(); }
+      openDayDialog(key);
+    });
     const number = document.createElement("span");
     number.textContent = String(day);
     cell.append(number);
     const icons = document.createElement("span");
     icons.className = "calendar-shifts";
     for (const type of ["main", "taltap"]) {
-      const dayShifts = shifts.filter(s => s.date === key && s.type === type);
-      if (dayShifts.length) {
-        const icon = document.createElement("span");
-        icon.className = "shift-briefcase " + (type === "main" ? "primary" : "taltap");
-        icon.innerHTML = briefcaseSVG;
-        icon.title = (type === "main" ? "Main work" : "TalTap") + ": " + Number(dayShifts.reduce((sum,s) => sum+s.hours,0).toFixed(2)) + " h";
-        icons.append(icon);
-      }
+      const matches = shifts.filter((s) => s.date === key && s.type === type);
+      if (!matches.length) continue;
+      const icon = document.createElement("span");
+      icon.className = "shift-briefcase " + (type === "main" ? "primary" : "taltap");
+      icon.innerHTML = briefcaseSVG;
+      icon.title = (type === "main" ? "Main work" : "TalTap") + ": " + quantity(matches.reduce((sum, s) => sum + s.hours, 0)) + " h";
+      icons.append(icon);
+    }
+    const paidToday = payments.filter((p) => p.date === key);
+    if (paidToday.length) {
+      const payoutIcon = document.createElement("span");
+      payoutIcon.className = "calendar-payday";
+      payoutIcon.textContent = "€";
+      payoutIcon.title = "Salary received: " + euro(paidToday.reduce((sum, p) => sum + p.amount, 0));
+      icons.append(payoutIcon);
     }
     cell.append(icons);
     calendarDays.append(cell);
   }
   renderWorkStats();
 }
-
 function changeCalendarMonth(delta) {
   const target = new Date(Date.UTC(visibleYear, visibleMonth + delta, 1));
   visibleYear = target.getUTCFullYear();
   visibleMonth = target.getUTCMonth();
+  selectedDate = dateKey(visibleYear, visibleMonth, 1);
   renderCalendar();
 }
-document.querySelector("#calendar-prev").addEventListener("click", () => changeCalendarMonth(-1));
-document.querySelector("#calendar-next").addEventListener("click", () => changeCalendarMonth(1));
+
+function syncPaymentField() {
+  const isTalTap = typeInput.value === "taltap";
+  $("#shift-payment-field").hidden = !isTalTap;
+  receivedInput.required = isTalTap;
+}
+function openShiftDialog(id = null) {
+  editingShiftId = id;
+  const shift = shifts.find((s) => s.id === id);
+  dateInput.value = shift?.date || selectedDate;
+  typeInput.value = shift?.type || "main";
+  hoursInput.value = shift?.hours ?? "";
+  receivedInput.value = shift?.payment ?? "";
+  $("#shift-dialog-title").textContent = shift ? "Edit shift" : "Add shift";
+  $("#save-shift").textContent = shift ? "Save changes" : "Save shift";
+  $("#delete-shift").hidden = !shift;
+  syncPaymentField();
+  shiftDialog.showModal();
+}
+function closeDialogByBackdrop(dialog) {
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+}
+function openDayDialog(dateKeyValue) {
+  const d = new Date(dateKeyValue + "T00:00:00Z");
+  $("#day-dialog-title").textContent = dayFormatter.format(d);
+  const list = $("#day-entries");
+  list.replaceChildren();
+  const dayShifts = shifts.filter((s) => s.date === dateKeyValue);
+  const dayPayments = payments.filter((p) => p.date === dateKeyValue);
+  if (!dayShifts.length && !dayPayments.length) {
+    const empty = document.createElement("p");
+    empty.className = "day-empty";
+    empty.textContent = "No entries for this day.";
+    list.append(empty);
+  }
+  dayShifts.forEach((s) => {
+    const row = document.createElement("div");
+    row.className = "day-entry";
+    const info = document.createElement("span");
+    info.className = "day-entry-info";
+    const label = document.createElement("span");
+    label.textContent = s.type === "main" ? "Main work" : "TalTap";
+    const detail = document.createElement("small");
+    detail.textContent = quantity(s.hours) + " h" + (s.type === "taltap" && s.payment !== null ? " · " + euro(s.payment) : "");
+    info.append(label, detail);
+    const edit = document.createElement("button");
+    edit.className = "day-edit";
+    edit.type = "button";
+    edit.textContent = "Edit";
+    edit.addEventListener("click", () => { dayDialog.close(); openShiftDialog(s.id); });
+    row.append(info, edit);
+    list.append(row);
+  });
+  dayPayments.forEach((p) => {
+    const row = document.createElement("div");
+    row.className = "day-entry";
+    const info = document.createElement("span");
+    info.className = "day-entry-info";
+    const label = document.createElement("span");
+    label.textContent = "Salary received";
+    const detail = document.createElement("small");
+    detail.textContent = euro(p.amount) + " · for " + p.workMonth;
+    info.append(label, detail);
+    const actions = document.createElement("div");
+    actions.className = "day-entry-actions";
+    const remove = document.createElement("button");
+    remove.className = "day-edit";
+    remove.type = "button";
+    remove.textContent = "Delete";
+    remove.addEventListener("click", () => {
+      if (!confirm("Delete this salary payment?")) return;
+      const next = payments.filter((payment) => payment.id !== p.id);
+      if (!saveArray(paymentStorageKey, next)) return;
+      payments = next;
+      renderCalendar();
+      openDayDialog(dateKeyValue);
+    });
+    actions.append(remove);
+    row.append(info, actions);
+    list.append(row);
+  });
+  dayDialog.showModal();
+}
+
+$("#calendar-prev").addEventListener("click", () => changeCalendarMonth(-1));
+$("#calendar-next").addEventListener("click", () => changeCalendarMonth(1));
+$("#add-shift").addEventListener("click", () => openShiftDialog());
+$("#close-shift").addEventListener("click", () => shiftDialog.close());
+$("#close-day").addEventListener("click", () => dayDialog.close());
+$("#close-payment").addEventListener("click", () => paymentDialog.close());
+$("#day-add-shift").addEventListener("click", () => { dayDialog.close(); openShiftDialog(); });
+typeInput.addEventListener("change", syncPaymentField);
+[shiftDialog, dayDialog, paymentDialog].forEach(closeDialogByBackdrop);
+
+shiftForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const date = dateInput.value;
+  const type = typeInput.value;
+  const hours = Number(hoursInput.value);
+  const received = receivedInput.value === "" ? null : Number(receivedInput.value);
+  if (!validDay(date) || !["main","taltap"].includes(type) || !Number.isFinite(hours) ||
+      hours < 0.25 || hours > 24 || !Number.isInteger(hours * 4) ||
+      (type === "taltap" && (received === null || !Number.isFinite(received) || received < 0))) return;
+  const entry = {
+    id: editingShiftId || newId(), date, type, hours,
+    payment: type === "taltap" ? Math.round(received * 100) / 100 : null
+  };
+  const next = editingShiftId
+    ? shifts.map((s) => s.id === editingShiftId ? entry : s)
+    : [...shifts, entry];
+  if (!saveArray(shiftStorageKey, next)) return;
+  shifts = next;
+  selectedDate = date;
+  visibleYear = Number(date.slice(0, 4));
+  visibleMonth = Number(date.slice(5, 7)) - 1;
+  shiftDialog.close();
+  renderCalendar();
+});
+$("#delete-shift").addEventListener("click", () => {
+  if (!editingShiftId || !confirm("Delete this shift?")) return;
+  const next = shifts.filter((s) => s.id !== editingShiftId);
+  if (!saveArray(shiftStorageKey, next)) return;
+  shifts = next;
+  shiftDialog.close();
+  renderCalendar();
+});
+
+$("#add-payment").addEventListener("click", () => {
+  const today = rigaToday();
+  $("#payment-month").value = dateKey(visibleYear, visibleMonth, 1).slice(0, 7);
+  $("#payment-date").value = dateKey(today.year, today.month, today.day);
+  $("#payment-amount").value = "";
+  paymentDialog.showModal();
+});
+$("#payment-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const workMonth = $("#payment-month").value;
+  const date = $("#payment-date").value;
+  const amount = Number($("#payment-amount").value);
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(workMonth) || !validDay(date) ||
+      !Number.isFinite(amount) || amount <= 0) return;
+  const next = [...payments, { id: newId(), workMonth, date, amount: Math.round(amount * 100) / 100 }];
+  if (!saveArray(paymentStorageKey, next)) return;
+  payments = next;
+  paymentDialog.close();
+  renderCalendar();
+});
+
 renderCalendar();
