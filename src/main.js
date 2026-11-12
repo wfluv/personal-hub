@@ -1,3 +1,4 @@
+import { initDebts, refreshDebts } from "./debts.js";
 import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut } from "./cloud.js";
 const root = document.querySelector("#app");
 
@@ -362,6 +363,7 @@ $("#payment-form").addEventListener("submit", (event) => {
 });
 
 renderCalendar();
+initDebts();
 
 const cloudDialog = $("#cloud-dialog");
 const cloudStatus = $("#cloud-status");
@@ -385,6 +387,7 @@ function cloudRecordsChanged() {
     p && validDay(p.date) && typeof p.workMonth === "string" &&
     Number.isFinite(p.amount) && p.amount > 0);
   renderCalendar();
+  refreshDebts();
 }
 $("#cloud-access").addEventListener("click", () => cloudDialog.showModal());
 $("#cloud-close").addEventListener("click", () => cloudDialog.close());
