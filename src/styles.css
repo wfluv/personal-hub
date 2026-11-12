@@ -214,3 +214,75 @@ button { font: inherit; }
   .balance-amount { font-size: 29px; }
   .allocation-popover { width: 238px; }
 }
+
+/* Work calendar — Monday-first, quiet monochrome design */
+.work-calendar {
+  width: min(100%, 660px);
+  color: #f3f3f2;
+}
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 38px;
+}
+.calendar-title {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 29px);
+  font-weight: 450;
+  letter-spacing: -0.045em;
+}
+.calendar-controls { display: flex; gap: 5px; }
+.calendar-nav {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #eaeaea;
+  font-size: 28px;
+  font-weight: 300;
+  cursor: pointer;
+}
+.calendar-nav:hover { background: var(--hover); }
+.calendar-nav:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
+.calendar-weekdays,
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+.calendar-weekdays {
+  margin-bottom: 16px;
+  color: #a4a4a4;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.calendar-days { row-gap: 10px; }
+.calendar-day {
+  display: grid;
+  place-items: center;
+  min-height: 60px;
+  font-size: 13px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.calendar-day.is-today > span {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  border: 1px solid #f3f3f2;
+  border-radius: 50%;
+}
+.calendar-day.is-outside { color: #55595b; }
+@media (max-width: 600px) {
+  .calendar-header { margin-bottom: 30px; }
+  .calendar-day { min-height: 42px; font-size: 12px; }
+  .calendar-days { row-gap: 5px; }
+  .calendar-day.is-today > span { width: 30px; height: 30px; }
+}
