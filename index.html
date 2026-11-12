@@ -45,7 +45,21 @@
             </div>
           </section>
 
-          <section class="page page-work" data-view="work" aria-label="Work" hidden></section>
+          <section class="page page-work" data-view="work" aria-label="Work" hidden>
+            <div class="work-calendar" aria-label="Work calendar">
+              <header class="calendar-header">
+                <h1 class="calendar-title" id="calendar-month"></h1>
+                <div class="calendar-controls">
+                  <button type="button" class="calendar-nav" id="calendar-prev" aria-label="Previous month">‹</button>
+                  <button type="button" class="calendar-nav" id="calendar-next" aria-label="Next month">›</button>
+                </div>
+              </header>
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+              </div>
+              <div class="calendar-days" id="calendar-days" role="grid" aria-labelledby="calendar-month"></div>
+            </div>
+          </section>
         </main>
       </div>
     </div>
