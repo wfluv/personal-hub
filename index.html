@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#101112" />
     <meta name="description" content="Personal Hub — finances and work in one place." />
     <title>Personal Hub</title>
-    <link rel="stylesheet" href="./src/styles.css?v=cloud-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=debts-1" />
   </head>
   <body>
     <div id="app">
@@ -18,6 +18,9 @@
             </button>
             <button class="nav-button" type="button" data-page="work" aria-label="Work" title="Work">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12h18M10 12v2h4v-2"></path></svg>
+            </button>
+            <button class="nav-button" type="button" data-page="debts" aria-label="Debts & Credits" title="Debts & Credits">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5"></rect><path d="M7 9h10M7 13h6"></path></svg>
             </button>
           </nav>
           <button class="cloud-access" id="cloud-access" type="button" title="Cloud sync" aria-label="Cloud sync">
@@ -100,9 +103,62 @@
               </form>
             </dialog>
           </section>
+          <section class="page page-debts" data-view="debts" aria-label="Debts and credits" hidden>
+            <div class="debt-container">
+              <header class="debts-top">
+                <div class="debt-summary">
+                  <div class="debt-kicker">TOTAL REMAINING</div>
+                  <div class="debt-grand-total" id="debts-remaining">€0.00</div>
+                  <div class="debt-monthly-summary"><span>Monthly payments</span><strong id="debts-monthly">€0.00</strong></div>
+                </div>
+                <button class="debt-add-button" id="debt-add" type="button" aria-label="Add debt" title="Add debt">+</button>
+              </header>
+              <div class="debts-list" id="debts-list"></div>
+              <p class="debts-empty" id="debts-empty">No debts yet. Add your first debt or credit.</p>
+            </div>
+          </section>
         </main>
       </div>
     </div>
+    <dialog class="shift-dialog debt-dialog" id="debt-editor" aria-labelledby="debt-editor-title">
+      <form id="debt-form">
+        <div class="dialog-heading"><h2 id="debt-editor-title">Add debt</h2><button class="dialog-close" type="button" data-close-debt="debt-editor" aria-label="Close">×</button></div>
+        <label class="field-label" for="debt-name">Name</label>
+        <input class="shift-input" id="debt-name" type="text" maxlength="90" placeholder="Phone credit" required />
+        <label class="field-label" for="debt-type">Type</label>
+        <select class="shift-input" id="debt-type"><option value="credit">Credit</option><option value="debt">Debt</option></select>
+        <label class="field-label" for="debt-total">Original amount (€)</label>
+        <input class="shift-input" id="debt-total" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" required />
+        <label class="field-label" for="debt-already-paid">Already paid (€)</label>
+        <input class="shift-input" id="debt-already-paid" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" value="0" required />
+        <label class="field-label" for="debt-monthly-payment">Monthly payment (€)</label>
+        <input class="shift-input" id="debt-monthly-payment" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" value="0" required />
+        <div class="dialog-actions">
+          <button class="danger-action" id="debt-delete" type="button" hidden>Delete</button>
+          <button class="shift-submit" type="submit">Save</button>
+        </div>
+        <p class="debt-form-error" id="debt-error" role="alert"></p>
+      </form>
+    </dialog>
+    <dialog class="shift-dialog debt-dialog" id="debt-details" aria-labelledby="debt-details-title">
+      <div class="dialog-heading"><h2 id="debt-details-title">Debt</h2><button class="dialog-close" type="button" data-close-debt="debt-details" aria-label="Close">×</button></div>
+      <div id="debt-details-body"></div>
+      <div class="debt-detail-actions">
+        <button class="cloud-secondary" id="debt-edit-action" type="button">Edit details</button>
+        <button class="shift-submit" id="debt-pay-action" type="button">+ Add payment</button>
+      </div>
+    </dialog>
+    <dialog class="shift-dialog debt-dialog" id="debt-payment-dialog" aria-labelledby="debt-payment-title">
+      <form id="debt-payment-form">
+        <div class="dialog-heading"><h2 id="debt-payment-title">Add payment</h2><button class="dialog-close" type="button" data-close-debt="debt-payment-dialog" aria-label="Close">×</button></div>
+        <label class="field-label" for="debt-payment-date">Date</label>
+        <input class="shift-input" type="date" id="debt-payment-date" required />
+        <label class="field-label" for="debt-payment-amount">Amount (€)</label>
+        <input class="shift-input" type="number" id="debt-payment-amount" min="0.01" max="999999999" step="0.01" inputmode="decimal" required />
+        <button class="shift-submit" type="submit">Save payment</button>
+        <p class="debt-form-error" id="debt-payment-error" role="alert"></p>
+      </form>
+    </dialog>
     <dialog class="shift-dialog cloud-dialog" id="cloud-dialog" aria-labelledby="cloud-title">
       <div class="dialog-heading">
         <h2 id="cloud-title">Cloud sync</h2>
@@ -129,6 +185,6 @@
       </div>
       <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
     </dialog>
-    <script type="module" src="./src/main.js?v=cloud-fix-3"></script>
+    <script type="module" src="./src/main.js?v=debts-1"></script>
   </body>
 </html>
