@@ -3,20 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f4f1" />
-    <meta name="description" content="Personal Hub" />
+    <meta name="theme-color" content="#101112" />
+    <meta name="description" content="Personal Hub — finances and work in one place." />
     <title>Personal Hub</title>
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
     <div id="app">
-      <main class="app-shell" aria-label="Personal Hub">
-        <div class="app-placeholder">
-          <p class="eyebrow">PERSONAL HUB</p>
-          <h1>New foundation</h1>
-          <p>The next version starts here.</p>
-        </div>
-      </main>
+      <div class="app-layout">
+        <aside class="sidebar" aria-label="Main navigation">
+          <nav class="navigation">
+            <button class="nav-button is-active" type="button" data-page="finances" aria-label="Finances" aria-current="page" title="Finances">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"></rect><path d="M3.5 9h17M16 14h.01"></path></svg>
+            </button>
+            <button class="nav-button" type="button" data-page="work" aria-label="Work" title="Work">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12h18M10 12v2h4v-2"></path></svg>
+            </button>
+          </nav>
+        </aside>
+
+        <main class="main-content">
+          <section class="page page-finances" data-view="finances" aria-label="Finances">
+            <div class="balance-wrap">
+              <div class="balance-control">
+                <button class="allocation-trigger" type="button" aria-label="Show portfolio allocation" aria-expanded="false" aria-controls="allocation-popover">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+                <div class="balance-amount" aria-label="Total balance">€0.00</div>
+              </div>
+
+              <section class="allocation-popover" id="allocation-popover" aria-label="Portfolio diversification" hidden>
+                <div class="popover-heading">Portfolio allocation</div>
+                <div class="allocation-list">
+                  <div class="allocation-row"><span>Cash</span><span>—</span></div>
+                  <div class="allocation-row"><span>Savings</span><span>—</span></div>
+                  <div class="allocation-row"><span>Investments</span><span>—</span></div>
+                  <div class="allocation-row"><span>Other</span><span>—</span></div>
+                </div>
+                <p class="popover-note">Your portfolio breakdown will appear here.</p>
+              </section>
+            </div>
+          </section>
+
+          <section class="page page-work" data-view="work" aria-label="Work" hidden></section>
+        </main>
+      </div>
     </div>
     <script type="module" src="./src/main.js"></script>
   </body>
