@@ -325,3 +325,28 @@ button { font: inherit; }
 .shift-submit:hover { background: white; }
 @media (max-width: 860px) { .work-layout { flex-direction: column; gap: 28px; } .work-calendar { flex: auto; width: min(100%, 660px); } .work-aside { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); width: min(100%,660px); padding-top: 0; flex: auto; gap: 10px; } .add-shift-button { grid-column: 1/-1; margin-bottom: 0; } .work-stat-caption { grid-column: 1/-1; } }
 @media (max-width: 480px) { .work-stat { padding: 12px; } .work-stat-line strong { font-size: 23px; } .hourly-rate { font-size: 10px; } .calendar-day { min-height: 49px; } .calendar-day.is-today > span:first-child { width: 30px; height: 30px; } }
+
+/* Payroll and compact day editing */
+.calendar-day.is-selected { background: transparent; }
+.calendar-day.is-selected:hover { background: #1b1e20; }
+.calendar-day.is-today > span:first-child { border: 1px solid #f3f3f2; border-radius: 50%; }
+.calendar-day.is-today > span:not(:first-child) { border: 0; }
+.calendar-day.is-today .shift-briefcase { border: 0; }
+.calendar-payday { color: #b6bac0; font-size: 10px; line-height: 12px; margin-left: 3px; }
+.earnings-line { display: flex; justify-content: space-between; gap: 8px; margin-top: 15px; color: #777d80; font-size: 11px; }
+.earnings-line span:last-child { color: #b5b9ba; font-variant-numeric: tabular-nums; }
+.text-action { width: fit-content; border: 0; padding: 10px 0 0; background: transparent; color: #aab0b3; font-size: 11px; cursor: pointer; }
+.text-action:hover { color: #fff; }
+.day-entries { display: grid; gap: 8px; }
+.day-entry { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; background: #121516; border: 1px solid #313638; border-radius: 8px; }
+.day-entry-info { display: grid; gap: 5px; font-size: 12px; }
+.day-entry-info small { color: #8d9294; font-size: 11px; }
+.day-entry-actions { display: flex; align-items: center; gap: 7px; }
+.day-edit { border: 0; background: #252a2c; color: #ddd; border-radius: 6px; padding: 7px 9px; font-size: 11px; cursor: pointer; }
+.day-edit:hover { background: #313638; }
+.day-empty { color: #8b9092; font-size: 12px; margin: 6px 0; }
+.dialog-actions { display: flex; gap: 12px; align-items: center; }
+.dialog-actions .shift-submit { flex: 1; }
+.danger-action { margin-top: 22px; color: #e28e8e; border: 1px solid #573939; background: transparent; padding: 0 11px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+.danger-action:hover { background: #3b2222; }
+#shift-payment-field[hidden] { display: none; }
