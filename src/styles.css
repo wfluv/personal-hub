@@ -350,3 +350,16 @@ button { font: inherit; }
 .danger-action { margin-top: 22px; color: #e28e8e; border: 1px solid #573939; background: transparent; padding: 0 11px; height: 42px; border-radius: 8px; cursor: pointer; font-size: 12px; }
 .danger-action:hover { background: #3b2222; }
 #shift-payment-field[hidden] { display: none; }
+
+/* Keep the outline only around today's date, never around shift icons. */
+.calendar-day.is-today > .calendar-shifts {
+  width: auto;
+  height: 12px;
+  min-height: 12px;
+  display: flex;
+  place-items: normal;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+}
