@@ -1,5 +1,5 @@
 import { initDebts, refreshDebts } from "./debts.js";
-import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut } from "./cloud.js?v=debts-1";
+import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut, sendPasswordReset, updatePassword } from "./cloud.js?v=debts-1";
 const root = document.querySelector("#app");
 
 if (!root) {
@@ -409,6 +409,30 @@ $("#cloud-register").addEventListener("click", async () => {
     $("#cloud-password").value = "";
   } catch (error) { cloudMessage.textContent = error.message; }
 });
+$("#cloud-forgot").addEventListener("click", async () => {
+  const emailInput = $("#cloud-email");
+  if (!emailInput.value.trim() || !emailInput.checkValidity()) {
+    cloudMessage.textContent = "Enter your email address first, then choose Forgot password.";
+    emailInput.focus();
+    return;
+  }
+  cloudMessage.textContent = "Sending recovery link…";
+  try {
+    await sendPasswordReset(emailInput.value.trim());
+    cloudMessage.textContent = "If an account exists for this email, a password reset link will arrive shortly. Open it on this device.";
+  } catch (error) { cloudMessage.textContent = error.message; }
+});
+$("#cloud-recovery-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const password = $("#cloud-new-password").value;
+  cloudMessage.textContent = "Updating password…";
+  try {
+    await updatePassword(password);
+    $("#cloud-recovery-form").hidden = true;
+    cloudMessage.textContent = "Password updated. You're now signed in.";
+    $("#cloud-new-password").value = "";
+  } catch (error) { cloudMessage.textContent = error.message; }
+});
 $("#cloud-signout").addEventListener("click", async () => {
   try {
     await signOut();
@@ -419,5 +443,12 @@ $("#cloud-sync-now").addEventListener("click", () => void synchronize());
 void initializeCloud({
   onChange: cloudRecordsChanged,
   onStatus: showCloudStatus,
-  onUser: cloudUserChanged
+  onUser: cloudUserChanged,
+  onRecovery: () => {
+    cloudDialog.showModal();
+    $("#cloud-signed-out").hidden = true;
+    $("#cloud-signed-in").hidden = true;
+    $("#cloud-recovery-form").hidden = false;
+    cloudMessage.textContent = "Enter a new password to finish account recovery.";
+  }
 });
