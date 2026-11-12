@@ -175,6 +175,7 @@
           <div class="cloud-auth-actions">
             <button class="shift-submit" type="submit" id="cloud-login">Sign in</button>
             <button class="cloud-secondary" type="button" id="cloud-register">Create account</button>
+            <button class="cloud-forgot" type="button" id="cloud-forgot">Forgot password?</button>
           </div>
         </form>
       </div>
@@ -183,8 +184,14 @@
         <button class="cloud-secondary" type="button" id="cloud-sync-now">Sync now</button>
         <button class="cloud-signout" type="button" id="cloud-signout">Sign out</button>
       </div>
+      <form id="cloud-recovery-form" hidden>
+        <p class="cloud-help">Choose a new password for your Personal Hub account.</p>
+        <label class="field-label" for="cloud-new-password">New password</label>
+        <input class="shift-input" id="cloud-new-password" type="password" minlength="8" autocomplete="new-password" required />
+        <button class="shift-submit" type="submit">Update password</button>
+      </form>
       <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
     </dialog>
-    <script type="module" src="./src/main.js?v=debts-1"></script>
+    <script type="module" src="./src/main.js?v=auth-reset-1"></script>
   </body>
 </html>
