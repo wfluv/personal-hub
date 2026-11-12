@@ -103,6 +103,32 @@
         </main>
       </div>
     </div>
-    <script type="module" src="./src/main.js?v=cloud-fix-2"></script>
+    <dialog class="shift-dialog cloud-dialog" id="cloud-dialog" aria-labelledby="cloud-title">
+      <div class="dialog-heading">
+        <h2 id="cloud-title">Cloud sync</h2>
+        <button class="dialog-close" id="cloud-close" type="button" aria-label="Close">×</button>
+      </div>
+      <p class="cloud-status" id="cloud-status">Connecting…</p>
+      <div id="cloud-signed-out">
+        <p class="cloud-help">Use the same account on your phone and computer to keep shifts and salary payments synchronized.</p>
+        <form id="cloud-form">
+          <label class="field-label" for="cloud-email">Email</label>
+          <input class="shift-input" id="cloud-email" type="email" autocomplete="username" required />
+          <label class="field-label" for="cloud-password">Password</label>
+          <input class="shift-input" id="cloud-password" type="password" minlength="6" autocomplete="current-password" required />
+          <div class="cloud-auth-actions">
+            <button class="shift-submit" type="submit" id="cloud-login">Sign in</button>
+            <button class="cloud-secondary" type="button" id="cloud-register">Create account</button>
+          </div>
+        </form>
+      </div>
+      <div id="cloud-signed-in" hidden>
+        <div class="cloud-email-display" id="cloud-current-email"></div>
+        <button class="cloud-secondary" type="button" id="cloud-sync-now">Sync now</button>
+        <button class="cloud-signout" type="button" id="cloud-signout">Sign out</button>
+      </div>
+      <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
+    </dialog>
+    <script type="module" src="./src/main.js?v=cloud-fix-3"></script>
   </body>
 </html>
