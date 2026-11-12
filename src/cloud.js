@@ -110,7 +110,7 @@ export async function synchronize() {
   } catch (error) { status("Offline — changes kept locally"); }
   finally { busy = false; }
 }
-export async function initializeCloud({ onChange, onStatus, onUser }) {
+export async function initializeCloud({ onChange, onStatus, onUser, onRecovery }) {
   if (hasStarted) return;
   hasStarted = true;
   onRecordsChanged = onChange;
@@ -127,7 +127,8 @@ export async function initializeCloud({ onChange, onStatus, onUser }) {
     onUser(user);
     status(user ? "Connecting…" : "Local only");
     if (user) void synchronize();
-    client.auth.onAuthStateChange((_event, session) => {
+    client.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") onRecovery?.();
       const changed = user?.id !== session?.user?.id;
       user = session?.user || null;
       onUser(user);
@@ -160,5 +161,18 @@ export async function signUp(email, password) {
 export async function signOut() {
   if (!client) return;
   const { error } = await client.auth.signOut();
+  if (error) throw error;
+}
+
+export async function sendPasswordReset(email) {
+  if (!client) throw new Error("Cloud connection is not available.");
+  const { error } = await client.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  });
+  if (error) throw error;
+}
+export async function updatePassword(password) {
+  if (!client) throw new Error("Cloud connection is not available.");
+  const { error } = await client.auth.updateUser({ password });
   if (error) throw error;
 }
