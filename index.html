@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#101112" />
     <meta name="description" content="Personal Hub — finances and work in one place." />
     <title>Personal Hub</title>
-    <link rel="stylesheet" href="./src/styles.css?v=work-shifts-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=work-pay-2" />
   </head>
   <body>
     <div id="app">
@@ -61,8 +61,8 @@
             </div>
             <aside class="work-aside">
               <button class="add-shift-button" id="add-shift" type="button"><span class="add-shift-plus" aria-hidden="true">+</span> Add shift</button>
-              <div class="work-stat"><div class="work-stat-name"><span class="work-dot primary"></span> Main work</div><div class="work-stat-line"><strong id="main-hours">0 <small>h</small></strong><span class="hourly-rate">— €/h</span></div></div>
-              <div class="work-stat"><div class="work-stat-name"><span class="work-dot taltap"></span> TalTap</div><div class="work-stat-line"><strong id="taltap-hours">0 <small>h</small></strong><span class="hourly-rate">— €/h</span></div></div>
+              <div class="work-stat"><div class="work-stat-name"><span class="work-dot primary"></span> Main work</div><div class="work-stat-line"><strong id="main-hours">0 <small>h</small></strong><span class="hourly-rate" id="main-rate">— €/h</span></div><div class="earnings-line"><span>Received for month</span><span id="main-pay">—</span></div><button class="text-action" id="add-payment" type="button">+ Record salary</button></div>
+              <div class="work-stat"><div class="work-stat-name"><span class="work-dot taltap"></span> TalTap</div><div class="work-stat-line"><strong id="taltap-hours">0 <small>h</small></strong><span class="hourly-rate" id="taltap-rate">— €/h</span></div><div class="earnings-line"><span>Received</span><span id="taltap-pay">—</span></div></div>
               <p class="work-stat-caption">Hours for the displayed month</p>
             </aside>
             </div>
@@ -75,7 +75,24 @@
                 <select class="shift-input" id="shift-type" name="type"><option value="main">Main work</option><option value="taltap">TalTap</option></select>
                 <label class="field-label" for="shift-hours">Hours</label>
                 <input class="shift-input" id="shift-hours" name="hours" type="number" min="0.25" max="24" step="0.25" placeholder="8" inputmode="decimal" required />
-                <button class="shift-submit" type="submit">Save shift</button>
+                <div id="shift-payment-field" hidden><label class="field-label" for="shift-payment">Money received (€)</label><input class="shift-input" id="shift-payment" name="payment" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></div><div class="dialog-actions"><button class="danger-action" id="delete-shift" type="button" hidden>Delete</button><button class="shift-submit" id="save-shift" type="submit">Save shift</button></div>
+              </form>
+            </dialog>
+            <dialog class="shift-dialog" id="day-dialog" aria-labelledby="day-dialog-title">
+              <div class="dialog-heading"><h2 id="day-dialog-title">Day</h2><button class="dialog-close" id="close-day" type="button" aria-label="Close">×</button></div>
+              <div id="day-entries" class="day-entries"></div>
+              <button class="shift-submit" id="day-add-shift" type="button">+ Add shift</button>
+            </dialog>
+            <dialog class="shift-dialog" id="payment-dialog" aria-labelledby="payment-dialog-title">
+              <form id="payment-form">
+                <div class="dialog-heading"><h2 id="payment-dialog-title">Record salary</h2><button class="dialog-close" id="close-payment" type="button" aria-label="Close">×</button></div>
+                <label class="field-label" for="payment-month">Work month</label>
+                <input class="shift-input" id="payment-month" type="month" required />
+                <label class="field-label" for="payment-date">Date received</label>
+                <input class="shift-input" id="payment-date" type="date" required />
+                <label class="field-label" for="payment-amount">Amount received (€)</label>
+                <input class="shift-input" id="payment-amount" type="number" min="0.01" step="0.01" inputmode="decimal" required />
+                <button class="shift-submit" type="submit">Save payment</button>
               </form>
             </dialog>
           </section>
