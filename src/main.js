@@ -77,6 +77,56 @@ function rigaToday() {
 const initialDate = rigaToday();
 let visibleYear = initialDate.year;
 let visibleMonth = initialDate.month;
+const dateKey = (year, month, day) => [year, String(month + 1).padStart(2, "0"), String(day).padStart(2, "0")].join("-");
+let selectedDate = dateKey(initialDate.year, initialDate.month, initialDate.day);
+const shiftStorageKey = "personal-hub:work-shifts:v1";
+function loadShifts() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(shiftStorageKey) || "[]");
+    return Array.isArray(parsed) ? parsed.filter(s => s && /^\d{4}-\d{2}-\d{2}$/.test(s.date) && ["main", "taltap"].includes(s.type) && Number.isFinite(s.hours) && s.hours > 0 && s.hours <= 24) : [];
+  } catch { return []; }
+}
+let shifts = loadShifts();
+const shiftDialog = document.querySelector("#shift-dialog");
+const shiftForm = document.querySelector("#shift-form");
+const dateInput = document.querySelector("#shift-date");
+const hoursInput = document.querySelector("#shift-hours");
+const briefcaseSVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2.5"></rect><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12h18"></path></svg>';
+function renderWorkStats() {
+  const monthPrefix = dateKey(visibleYear, visibleMonth, 1).slice(0, 7);
+  const totals = { main: 0, taltap: 0 };
+  shifts.forEach(s => { if (s.date.startsWith(monthPrefix)) totals[s.type] += s.hours; });
+  const format = value => Number.isInteger(value) ? String(value) : String(Number(value.toFixed(2)));
+  document.querySelector("#main-hours").innerHTML = format(totals.main) + " <small>h</small>";
+  document.querySelector("#taltap-hours").innerHTML = format(totals.taltap) + " <small>h</small>";
+}
+function openShiftDialog() {
+  dateInput.value = selectedDate;
+  hoursInput.value = "";
+  shiftDialog.showModal();
+}
+document.querySelector("#add-shift").addEventListener("click", openShiftDialog);
+document.querySelector("#close-shift").addEventListener("click", () => shiftDialog.close());
+shiftDialog.addEventListener("click", (event) => {
+  if (event.target === shiftDialog) shiftDialog.close();
+});
+shiftForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const date = dateInput.value;
+  const type = document.querySelector("#shift-type").value;
+  const hours = Number(hoursInput.value);
+  const parsedDate = new Date(date + "T00:00:00Z");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(parsedDate.getTime()) || parsedDate.toISOString().slice(0,10) !== date || !["main","taltap"].includes(type) || !Number.isFinite(hours) || hours <= 0 || hours > 24) return;
+  const next = [...shifts, { date, type, hours }];
+  try { localStorage.setItem(shiftStorageKey, JSON.stringify(next)); } catch { alert("Unable to save this shift on this device."); return; }
+  shifts = next;
+  selectedDate = date;
+  visibleYear = parsedDate.getUTCFullYear();
+  visibleMonth = parsedDate.getUTCMonth();
+  renderCalendar();
+  shiftDialog.close();
+});
+
 
 function renderCalendar() {
   const today = rigaToday();
@@ -94,9 +144,17 @@ function renderCalendar() {
     const year = date.getUTCFullYear();
     const month = date.getUTCMonth();
     const day = date.getUTCDate();
-    const cell = document.createElement("div");
+    const cell = document.createElement("button");
+    cell.type = "button";
     cell.className = "calendar-day";
     cell.setAttribute("role", "gridcell");
+    const key = dateKey(year, month, day);
+    if (key === selectedDate) cell.classList.add("is-selected");
+    cell.addEventListener("click", () => {
+      selectedDate = key;
+      if (month !== visibleMonth || year !== visibleYear) { visibleYear = year; visibleMonth = month; }
+      renderCalendar();
+    });
     cell.setAttribute("aria-label", new Intl.DateTimeFormat("en-GB", {
       day: "numeric", month: "long", year: "numeric", timeZone: "UTC"
     }).format(date));
@@ -108,8 +166,22 @@ function renderCalendar() {
     const number = document.createElement("span");
     number.textContent = String(day);
     cell.append(number);
+    const icons = document.createElement("span");
+    icons.className = "calendar-shifts";
+    for (const type of ["main", "taltap"]) {
+      const dayShifts = shifts.filter(s => s.date === key && s.type === type);
+      if (dayShifts.length) {
+        const icon = document.createElement("span");
+        icon.className = "shift-briefcase " + (type === "main" ? "primary" : "taltap");
+        icon.innerHTML = briefcaseSVG;
+        icon.title = (type === "main" ? "Main work" : "TalTap") + ": " + Number(dayShifts.reduce((sum,s) => sum+s.hours,0).toFixed(2)) + " h";
+        icons.append(icon);
+      }
+    }
+    cell.append(icons);
     calendarDays.append(cell);
   }
+  renderWorkStats();
 }
 
 function changeCalendarMonth(delta) {
