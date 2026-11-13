@@ -36,7 +36,8 @@ button { font: inherit; }
 .app-layout {
   display: flex;
   width: 100%;
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 0;
   background: var(--background);
 }
 
@@ -46,7 +47,7 @@ button { font: inherit; }
   display: flex;
   flex: 0 0 76px;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 0;
   padding: 28px 0;
   background: var(--sidebar);
   border-right: 1px solid var(--border);
@@ -90,7 +91,7 @@ button { font: inherit; }
   position: relative;
   flex: 1;
   min-width: 0;
-  min-height: 100vh;
+  min-height: 0;
   padding: 48px 54px;
 }
 
