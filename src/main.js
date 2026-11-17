@@ -1,3 +1,4 @@
+import { initFinance } from "./finance.js?v=budgets-1";
 import { initDebts, refreshDebts } from "./debts.js";
 import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut, sendPasswordReset, updatePassword } from "./cloud.js?v=debts-1";
 const root = document.querySelector("#app");
@@ -364,6 +365,7 @@ $("#payment-form").addEventListener("submit", (event) => {
 
 renderCalendar();
 initDebts();
+initFinance();
 
 const cloudDialog = $("#cloud-dialog");
 const cloudStatus = $("#cloud-status");

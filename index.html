@@ -8,7 +8,7 @@
     <title>Personal Hub</title>
     <link rel="icon" type="image/svg+xml" href="./personal-hub-icon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="./92E95777-41F5-4DBA-813D-BB1F782572C9.png?v=3" />
-    <link rel="stylesheet" href="./src/styles.css?v=debts-scroll-2" />
+    <link rel="stylesheet" href="./src/styles.css?v=budgets-1" />
   </head>
   <body>
     <div id="app">
@@ -51,6 +51,10 @@
                 </div>
                 <p class="popover-note">Your portfolio breakdown will appear here.</p>
               </section>
+            </div>
+            <div class="budget-section">
+              <header class="budget-heading"><h1>Monthly budgets</h1><input id="budget-month" type="month" aria-label="Budget month" required /></header>
+              <div class="budget-islands" id="finance-budgets"></div>
             </div>
           </section>
 
@@ -122,6 +126,19 @@
         </main>
       </div>
     </div>
+    <dialog class="shift-dialog" id="budget-dialog" aria-labelledby="budget-title">
+      <form id="budget-form">
+        <div class="dialog-heading"><h2 id="budget-title">Budget</h2><button class="dialog-close" id="budget-close" type="button" aria-label="Close">×</button></div>
+        <p class="budget-dialog-period" id="budget-period"></p>
+        <label class="field-label" for="budget-limit">Monthly budget (€)</label>
+        <input class="shift-input" id="budget-limit" name="limit" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" placeholder="No limit" />
+        <label class="field-label" for="budget-spent">Spent this month (€)</label>
+        <input class="shift-input" id="budget-spent" name="spent" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" required />
+        <p class="budget-dialog-period">Totals are saved on this device for now.</p>
+        <button class="shift-submit" type="submit">Save budget</button>
+        <p class="debt-form-error" id="budget-error" role="alert"></p>
+      </form>
+    </dialog>
     <dialog class="shift-dialog debt-dialog" id="debt-editor" aria-labelledby="debt-editor-title">
       <form id="debt-form">
         <div class="dialog-heading"><h2 id="debt-editor-title">Add debt</h2><button class="dialog-close" type="button" data-close-debt="debt-editor" aria-label="Close">×</button></div>
@@ -194,6 +211,6 @@
       </form>
       <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
     </dialog>
-    <script type="module" src="./src/main.js?v=auth-reset-1"></script>
+    <script type="module" src="./src/main.js?v=budgets-1"></script>
   </body>
 </html>
