@@ -14,6 +14,23 @@ export function initFinance() {
   month.value = parts.find(p => p.type === 'year').value + '-' + parts.find(p => p.type === 'month').value;
   const money = n => new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(n);
   let active;
+  let editingBudget = false;
+  const expenseField = document.querySelector('#budget-expense-field');
+  const limitField = document.querySelector('#budget-limit-field');
+  const submit = document.querySelector('#budget-submit');
+  const toggle = document.querySelector('#budget-edit-limit');
+  function setMode(budget) {
+    editingBudget = budget;
+    expenseField.hidden = budget;
+    limitField.hidden = !budget;
+    form.elements.spent.required = !budget;
+    form.elements.spent.disabled = budget;
+    form.elements.limit.disabled = !budget;
+    submit.textContent = budget ? 'Save budget' : 'Add expense';
+    toggle.textContent = budget ? '← Add expense' : 'Edit monthly budget';
+    if (!budget) form.elements.spent.value = '';
+  }
+  toggle.addEventListener('click', () => setMode(!editingBudget));
   function read() {
     try { const value = JSON.parse(localStorage.getItem(KEY) || '{}'); return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; }
     catch { return {}; }
@@ -29,16 +46,17 @@ export function initFinance() {
       const card = document.createElement('button');
       card.type = 'button';
       card.className = 'budget-island' + (over ? ' is-over' : '');
-      card.setAttribute('aria-label', name + ', spent ' + money(spent) + (limit ? ' of ' + money(limit) : ', no budget set') + '. Edit budget');
-      card.innerHTML = `<span class="budget-island-top"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg><span>${name}</span><span class="budget-edit" aria-hidden="true">↗</span></span><span class="budget-island-amount">${money(spent)}</span><span class="budget-island-limit">${limit ? 'of ' + money(limit) : 'Set monthly budget'}</span><span class="budget-track"><span style="width:${limit ? Math.min(100, spent / limit * 100) : 0}%"></span></span><span class="budget-island-remaining">${limit ? money(Math.abs(limit - spent)) + (over ? ' over budget' : ' left') : 'No limit set'}</span>`;
+      card.setAttribute('aria-label', name + ', spent ' + money(spent) + (limit ? ' of ' + money(limit) : ', no budget set') + '. Add expense');
+      card.innerHTML = `<span class="budget-island-top"><svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg><span>${name}</span><span class="budget-edit" aria-hidden="true">+</span></span><span class="budget-island-amount">${money(spent)}</span><span class="budget-island-limit">${limit ? 'of ' + money(limit) : 'Set monthly budget'}</span><span class="budget-track"><span style="width:${limit ? Math.min(100, spent / limit * 100) : 0}%"></span></span><span class="budget-island-remaining">${limit ? money(Math.abs(limit - spent)) + (over ? ' over budget' : ' left') : 'No limit set'}</span>`;
       card.addEventListener('click', () => {
         active = month.value + ':' + id;
         document.querySelector('#budget-title').textContent = name;
         document.querySelector('#budget-period').textContent = month.value;
-        form.elements.spent.value = spent;
+        setMode(false);
         form.elements.limit.value = limit || '';
         document.querySelector('#budget-error').textContent = '';
         dialog.showModal();
+        form.elements.spent.focus();
       });
       host.append(card);
     });
@@ -48,10 +66,14 @@ export function initFinance() {
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   form.addEventListener('submit', event => {
     event.preventDefault();
-    const spent = Number(form.elements.spent.value), limit = Number(form.elements.limit.value);
-    if (![spent, limit].every(n => Number.isFinite(n) && n >= 0 && n <= 999999999)) return;
+    const value = Number(editingBudget ? form.elements.limit.value : form.elements.spent.value);
+    if (!Number.isFinite(value) || value < (editingBudget ? 0 : 0.01) || value > 999999999) return;
     const data = read();
-    data[active] = { spent: Math.round(spent * 100) / 100, limit: Math.round(limit * 100) / 100 };
+    const previous = data[active] || {};
+    const spent = amount(previous.spent), limit = amount(previous.limit);
+    data[active] = editingBudget
+      ? { ...previous, spent, limit: Math.round(value * 100) / 100 }
+      : { ...previous, spent: (Math.round(spent * 100) + Math.round(value * 100)) / 100, limit };
     try { localStorage.setItem(KEY, JSON.stringify(data)); }
     catch { document.querySelector('#budget-error').textContent = 'Could not save on this device.'; return; }
     dialog.close();
