@@ -458,3 +458,10 @@ button { font: inherit; }
 .budget-dialog-period { color: var(--muted); font-size: 12px; line-height: 1.5; }
 @media(max-width: 950px) { .budget-islands { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media(max-width: 600px) { .budget-section { margin-top: 42px; } .budget-islands { grid-template-columns: 1fr; gap: 12px; } .budget-island { padding: 22px; } .budget-island-amount { margin-top: 24px; } }
+
+/* Account balances and income, inside the existing disclosure. */
+.allocation-actions { display: grid; gap: 5px; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+.allocation-actions button { padding: 10px 8px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); text-align: left; font-size: 12px; cursor: pointer; }
+.allocation-actions button:first-child { color: #a9c6b5; }
+.allocation-actions button:hover { background: var(--hover); color: var(--text); }
+.allocation-row span:last-child { overflow-wrap: anywhere; text-align: right; }

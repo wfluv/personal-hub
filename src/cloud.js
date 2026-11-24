@@ -7,7 +7,8 @@ const TABLE = "personal_hub_records";
 const SOURCES = {
   work_shifts: "personal-hub:work-shifts:v1",
   salary_payments: "personal-hub:salary-payments:v1",
-  debts: "personal-hub:debts:v1"
+  debts: "personal-hub:debts:v1",
+  finances: "personal-hub:finances:v1"
 };
 const OP_QUEUE = "personal-hub:pending-cloud-ops:v1";
 let client, user, busy = false, importing = false, hasStarted = false;

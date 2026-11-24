@@ -1,6 +1,6 @@
 // Personal Hub — Debts & Credits.
 // Every debt, including its payment history, is a single cloud-synced record.
-import { queueCloudDiff } from "./cloud.js?v=debts-1";
+import { queueCloudDiff } from "./cloud.js?v=finance-3";
 
 const KEY = "personal-hub:debts:v1";
 const $ = (selector) => document.querySelector(selector);

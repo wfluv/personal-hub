@@ -1,6 +1,6 @@
-import { initFinance } from "./finance.js?v=budgets-2";
-import { initDebts, refreshDebts } from "./debts.js";
-import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut, sendPasswordReset, updatePassword } from "./cloud.js?v=debts-1";
+import { initFinance, refreshFinance } from "./finance.js?v=finance-3";
+import { initDebts, refreshDebts } from "./debts.js?v=finance-3";
+import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut, sendPasswordReset, updatePassword } from "./cloud.js?v=finance-3";
 const root = document.querySelector("#app");
 
 if (!root) {
@@ -390,6 +390,7 @@ function cloudRecordsChanged() {
     Number.isFinite(p.amount) && p.amount > 0);
   renderCalendar();
   refreshDebts();
+  refreshFinance();
 }
 $("#cloud-access").addEventListener("click", () => cloudDialog.showModal());
 $("#cloud-close").addEventListener("click", () => cloudDialog.close());

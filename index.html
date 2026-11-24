@@ -8,7 +8,7 @@
     <title>Personal Hub</title>
     <link rel="icon" type="image/svg+xml" href="./personal-hub-icon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="./92E95777-41F5-4DBA-813D-BB1F782572C9.png?v=3" />
-    <link rel="stylesheet" href="./src/styles.css?v=budgets-1" />
+    <link rel="stylesheet" href="./src/styles.css?v=finance-3" />
   </head>
   <body>
     <div id="app">
@@ -35,26 +35,22 @@
           <section class="page page-finances" data-view="finances" aria-label="Finances">
             <div class="balance-wrap">
               <div class="balance-control">
-                <button class="allocation-trigger" type="button" aria-label="Show portfolio allocation" aria-expanded="false" aria-controls="allocation-popover">
+                <button class="allocation-trigger" type="button" aria-label="Show account balances" aria-expanded="false" aria-controls="allocation-popover">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
                 </button>
                 <div class="balance-amount" aria-label="Total balance">€0.00</div>
               </div>
 
-              <section class="allocation-popover" id="allocation-popover" aria-label="Portfolio diversification" hidden>
-                <div class="popover-heading">Portfolio allocation</div>
-                <div class="allocation-list">
-                  <div class="allocation-row"><span>Cash</span><span>—</span></div>
-                  <div class="allocation-row"><span>Savings</span><span>—</span></div>
-                  <div class="allocation-row"><span>Investments</span><span>—</span></div>
-                  <div class="allocation-row"><span>Other</span><span>—</span></div>
-                </div>
-                <p class="popover-note">Your portfolio breakdown will appear here.</p>
+              <section class="allocation-popover" id="allocation-popover" aria-label="Account balances" hidden>
+                <div class="popover-heading">Accounts</div>
+                <div class="allocation-list" id="finance-allocation"></div>
+                <div class="allocation-actions"><button id="add-income" type="button">+ Add income</button><button id="set-balances" type="button">Set current balances</button></div>
               </section>
             </div>
             <div class="budget-section">
               <header class="budget-heading"><h1>Monthly budgets</h1><input id="budget-month" type="month" aria-label="Budget month" required /></header>
               <div class="budget-islands" id="finance-budgets"></div>
+              <p class="debt-form-error" id="finance-error" role="alert"></p>
             </div>
           </section>
 
@@ -126,6 +122,18 @@
         </main>
       </div>
     </div>
+    <dialog class="shift-dialog" id="income-dialog" aria-labelledby="income-title">
+      <form id="income-form">
+        <div class="dialog-heading"><h2 id="income-title">Add income</h2><button class="dialog-close" id="income-close" type="button" aria-label="Close">×</button></div>
+        <label class="field-label" for="income-amount" id="income-amount-label">Amount received (€)</label>
+        <input class="shift-input" id="income-amount" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" placeholder="0.00" required />
+        <label class="field-label" for="income-account">Account</label><select class="shift-input" id="income-account" required></select>
+        <div id="income-date-field"><label class="field-label" for="income-date">Date received</label><input class="shift-input" id="income-date" type="date" required /></div>
+        <p class="budget-dialog-period" id="income-note"></p>
+        <button class="shift-submit" id="income-submit" type="submit">Add income</button>
+        <p class="debt-form-error" id="income-error" role="alert"></p>
+      </form>
+    </dialog>
     <dialog class="shift-dialog" id="budget-dialog" aria-labelledby="budget-title">
       <form id="budget-form">
         <div class="dialog-heading"><h2 id="budget-title">Budget</h2><button class="dialog-close" id="budget-close" type="button" aria-label="Close">×</button></div>
@@ -133,9 +141,11 @@
         <div id="budget-limit-field" hidden><label class="field-label" for="budget-limit">Monthly budget (€)</label>
         <input class="shift-input" id="budget-limit" name="limit" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" placeholder="No limit" /></div>
         <div id="budget-expense-field"><label class="field-label" for="budget-spent">Expense amount (€)</label>
-        <input class="shift-input" id="budget-spent" name="spent" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" placeholder="0.00" required /></div>
+        <input class="shift-input" id="budget-spent" name="spent" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" placeholder="0.00" required />
+        <label class="field-label" for="expense-account">Pay from</label><select class="shift-input" id="expense-account" required></select>
+        <label class="field-label" for="expense-date">Date</label><input class="shift-input" id="expense-date" type="date" required /></div>
         <button class="text-action" id="budget-edit-limit" type="button">Edit monthly budget</button>
-        <p class="budget-dialog-period">Totals are saved on this device for now.</p>
+        
         <button class="shift-submit" id="budget-submit" type="submit">Add expense</button>
         <p class="debt-form-error" id="budget-error" role="alert"></p>
       </form>
@@ -186,7 +196,7 @@
       </div>
       <p class="cloud-status" id="cloud-status">Connecting…</p>
       <div id="cloud-signed-out">
-        <p class="cloud-help">Use the same account on your phone and computer to keep shifts and salary payments synchronized.</p>
+        <p class="cloud-help">Use the same account on your phone and computer to keep finances, budgets, work and debts synchronized.</p>
         <form id="cloud-form">
           <label class="field-label" for="cloud-email">Email</label>
           <input class="shift-input" id="cloud-email" type="email" autocomplete="username" required />
@@ -212,6 +222,6 @@
       </form>
       <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
     </dialog>
-    <script type="module" src="./src/main.js?v=budgets-2"></script>
+    <script type="module" src="./src/main.js?v=finance-3"></script>
   </body>
 </html>
