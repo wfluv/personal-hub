@@ -45,11 +45,7 @@ navigationButtons.forEach((button) => {
   button.addEventListener("click", () => showPage(button.dataset.page));
 });
 
-allocationTrigger.addEventListener("click", () => {
-  const isOpen = allocationTrigger.getAttribute("aria-expanded") === "true";
-  if (isOpen) closeAllocation();
-  else openAllocation();
-});
+allocationTrigger.addEventListener("click", openAllocation);
 
 allocationTrigger.addEventListener("mouseenter", openAllocation);
 allocationTrigger.addEventListener("focus", openAllocation);
