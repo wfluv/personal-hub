@@ -1,0 +1,121 @@
+.page-workouts {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+.workout-content {
+  max-width: 1100px;
+}
+
+.workout-content h1,
+.workout-content h2 {
+  margin: 0 0 20px;
+  font-size: clamp(20px, 3vw, 30px);
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+
+.workout-content h2 {
+  margin-top: 34px;
+  font-size: 20px;
+}
+
+.workout-schedule {
+  padding: clamp(8px, 2vw, 24px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface-raised);
+}
+
+.workout-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(3px, .55vw, 8px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workout-week li {
+  display: grid;
+  gap: 10px;
+  color: #c7c9c9;
+  font-size: clamp(10px, 1.5vw, 17px);
+  text-align: center;
+}
+
+.workout-day {
+  display: grid;
+  min-height: clamp(38px, 6vw, 66px);
+  place-items: center;
+  border-radius: clamp(7px, 1.4vw, 16px);
+  background: #080909;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+.workout-day:focus-visible {
+  outline: 2px solid #62b58a;
+  outline-offset: 2px;
+}
+
+.workout-day[aria-pressed="false"] .workout-icon-complete,
+.workout-day[aria-pressed="true"] .workout-icon-pending {
+  display: none;
+}
+
+.workout-day[aria-pressed="true"] {
+  background: #202c26;
+}
+
+.workout-schedule .is-training svg,
+.workout-icon-complete {
+  color: #62b58a;
+}
+
+.workout-schedule svg {
+  width: clamp(15px, 3vw, 24px);
+  height: clamp(15px, 3vw, 24px);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workout-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 16px;
+  margin-top: 18px;
+  color: #c7c9c9;
+  font-size: clamp(12px, 1.5vw, 16px);
+}
+
+.workout-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.workout-exercises {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workout-exercises li {
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  font-size: 14px;
+}
