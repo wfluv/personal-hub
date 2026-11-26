@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#101112" />
-    <meta name="description" content="Personal Hub — finances and work in one place." />
+    <meta name="description" content="Personal Hub — finances, work and workouts in one place." />
     <title>Personal Hub</title>
     <link rel="icon" type="image/svg+xml" href="./personal-hub-icon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="./92E95777-41F5-4DBA-813D-BB1F782572C9.png?v=3" />
     <link rel="stylesheet" href="./src/styles.css?v=finance-3" />
+    <link rel="stylesheet" href="./src/workouts.css" />
   </head>
   <body>
     <div id="app">
@@ -23,6 +24,9 @@
             </button>
             <button class="nav-button" type="button" data-page="debts" aria-label="Debts & Credits" title="Debts & Credits">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5"></rect><path d="M7 9h10M7 13h6"></path></svg>
+            </button>
+            <button class="nav-button" type="button" data-page="workouts" aria-label="Workouts" title="Workouts">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6M3 12h2m14 0h2"/><rect x="5" y="6" width="4" height="12" rx="1.5"/><rect x="15" y="6" width="4" height="12" rx="1.5"/></svg>
             </button>
           </nav>
           <button class="cloud-access" id="cloud-access" type="button" title="Cloud sync" aria-label="Cloud sync">
@@ -117,6 +121,32 @@
               </header>
               <div class="debts-list" id="debts-list"></div>
               <p class="debts-empty" id="debts-empty">No debts yet. Add your first debt or credit.</p>
+            </div>
+          </section>
+          <section class="page page-workouts" data-view="workouts" aria-label="Workouts" hidden>
+            <div class="workout-content">
+              <h1>Workout Schedule</h1>
+              <div class="workout-schedule">
+                <ul class="workout-week" aria-label="Weekly schedule">
+                  <li><span>Mon</span><span class="workout-day is-training" role="img" aria-label="Workout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6M3 12h2m14 0h2"/><rect x="5" y="6" width="4" height="12" rx="1.5"/><rect x="15" y="6" width="4" height="12" rx="1.5"/></svg></span></li>
+                  <li><span>Tue</span><span class="workout-day" role="img" aria-label="Recovery"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15A8.6 8.6 0 0 1 9 3.5 8.7 8.7 0 1 0 20.5 15Z"/></svg></span></li>
+                  <li><span>Wed</span><span class="workout-day is-training" role="img" aria-label="Workout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6M3 12h2m14 0h2"/><rect x="5" y="6" width="4" height="12" rx="1.5"/><rect x="15" y="6" width="4" height="12" rx="1.5"/></svg></span></li>
+                  <li><span>Thu</span><span class="workout-day" role="img" aria-label="Recovery"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15A8.6 8.6 0 0 1 9 3.5 8.7 8.7 0 1 0 20.5 15Z"/></svg></span></li>
+                  <li><span>Fri</span><span class="workout-day is-training" role="img" aria-label="Workout"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6M3 12h2m14 0h2"/><rect x="5" y="6" width="4" height="12" rx="1.5"/><rect x="15" y="6" width="4" height="12" rx="1.5"/></svg></span></li>
+                  <li><span>Sat</span><span class="workout-day" role="img" aria-label="Recovery"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15A8.6 8.6 0 0 1 9 3.5 8.7 8.7 0 1 0 20.5 15Z"/></svg></span></li>
+                  <li><span>Sun</span><span class="workout-day" role="img" aria-label="Recovery"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15A8.6 8.6 0 0 1 9 3.5 8.7 8.7 0 1 0 20.5 15Z"/></svg></span></li>
+                </ul>
+                <div class="workout-legend">
+                  <span class="is-training"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12h6M3 12h2m14 0h2"/><rect x="5" y="6" width="4" height="12" rx="1.5"/><rect x="15" y="6" width="4" height="12" rx="1.5"/></svg> Workout</span>
+                  <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15A8.6 8.6 0 0 1 9 3.5 8.7 8.7 0 1 0 20.5 15Z"/></svg> Recovery</span>
+                </div>
+              </div>
+              <h2>Home Workout</h2>
+              <ul class="workout-exercises">
+                <li>Push-ups</li>
+                <li>Squats</li>
+                <li>Crunches</li>
+              </ul>
             </div>
           </section>
         </main>
