@@ -188,11 +188,11 @@
         <label class="field-label" for="debt-type">Type</label>
         <select class="shift-input" id="debt-type"><option value="credit">Credit</option><option value="debt">Debt</option></select>
         <label class="field-label" for="debt-total">Original amount (€)</label>
-        <input class="shift-input" id="debt-total" type="number" min="0.01" max="999999999" step="0.01" inputmode="decimal" required />
+        <input class="shift-input" id="debt-total" type="text" inputmode="decimal" required />
         <label class="field-label" for="debt-already-paid">Already paid (€)</label>
-        <input class="shift-input" id="debt-already-paid" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" value="0" required />
+        <input class="shift-input" id="debt-already-paid" type="text" inputmode="decimal" value="0" required />
         <label class="field-label" for="debt-monthly-payment">Monthly payment (€)</label>
-        <input class="shift-input" id="debt-monthly-payment" type="number" min="0" max="999999999" step="0.01" inputmode="decimal" value="0" required />
+        <input class="shift-input" id="debt-monthly-payment" type="text" inputmode="decimal" value="0" required />
         <div class="dialog-actions">
           <button class="danger-action" id="debt-delete" type="button" hidden>Delete</button>
           <button class="shift-submit" type="submit">Save</button>
@@ -214,7 +214,7 @@
         <label class="field-label" for="debt-payment-date">Date</label>
         <input class="shift-input" type="date" id="debt-payment-date" required />
         <label class="field-label" for="debt-payment-amount">Amount (€)</label>
-        <input class="shift-input" type="number" id="debt-payment-amount" min="0.01" max="999999999" step="0.01" inputmode="decimal" required />
+        <input class="shift-input" type="text" id="debt-payment-amount" inputmode="decimal" required />
         <button class="shift-submit" type="submit">Save payment</button>
         <p class="debt-form-error" id="debt-payment-error" role="alert"></p>
       </form>
@@ -252,7 +252,7 @@
       </form>
       <p class="cloud-message" id="cloud-message" role="status" aria-live="polite"></p>
     </dialog>
-    <script type="module" src="./src/main.js?v=finance-4"></script>
+    <script type="module" src="./src/main.js?v=finance-5"></script>
     <script type="module" src="./src/workouts.js"></script>
   </body>
 </html>
