@@ -6,6 +6,7 @@ const KEY = "personal-hub:debts:v1";
 const $ = (selector) => document.querySelector(selector);
 const money = (amount) => new Intl.NumberFormat("en-IE", { style: "currency", currency: "EUR" }).format(amount);
 const cents = (amount) => Math.round((amount + Number.EPSILON) * 100);
+const decimalAmount = (value) => { const raw = value.trim(); return /^\d{1,9}(?:[.,]\d{1,2})?$/.test(raw) ? Number(raw.replace(",", ".")) : NaN; };
 const uid = () => "debt-" + (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
 const validDate = (str) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(str)) return false;
@@ -175,9 +176,9 @@ export function initDebts() {
   $("#debt-form").addEventListener("submit", (event) => {
     event.preventDefault();
     const name = $("#debt-name").value.trim();
-    const totalCents = cents(Number($("#debt-total").value));
-    const initialPaidCents = cents(Number($("#debt-already-paid").value));
-    const monthlyCents = cents(Number($("#debt-monthly-payment").value));
+    const totalCents = cents(decimalAmount($("#debt-total").value));
+    const initialPaidCents = cents(decimalAmount($("#debt-already-paid").value));
+    const monthlyCents = cents(decimalAmount($("#debt-monthly-payment").value));
     const current = debts.find((d) => d.id === editingId);
     const existingPayments = current ? sumPayments(current) : 0;
     if (!name || !Number.isSafeInteger(totalCents) || totalCents < 1 ||
@@ -204,7 +205,7 @@ export function initDebts() {
     const debt = debts.find((d) => d.id === currentId);
     if (!debt) return;
     const date = $("#debt-payment-date").value;
-    const amountCents = cents(Number($("#debt-payment-amount").value));
+    const amountCents = cents(decimalAmount($("#debt-payment-amount").value));
     if (!validDate(date) || !Number.isSafeInteger(amountCents) || amountCents <= 0 || amountCents > remaining(debt)) {
       $("#debt-payment-error").textContent = "Enter a valid payment no larger than the remaining balance.";
       return;
