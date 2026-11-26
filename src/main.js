@@ -1,5 +1,5 @@
 import { initFinance, refreshFinance } from "./finance.js?v=finance-3";
-import { initDebts, refreshDebts } from "./debts.js?v=finance-3";
+import { initDebts, refreshDebts } from "./debts.js?v=finance-5";
 import { initializeCloud, queueCloudDiff, synchronize, signIn, signUp, signOut, sendPasswordReset, updatePassword } from "./cloud.js?v=finance-3";
 const root = document.querySelector("#app");
 
